@@ -20,12 +20,12 @@ static void printString(const String & s)
 	//printf("%s\n",s.utf8().data());
 }
     /*
-      Ê×ÏÈmanagerÒÑ¾­ÅĞ¶Ï¹ıÊÇ¹ıÂË¶ø²»ÊÇÒş²Ø¹æÔòÁË
-      ÒÔ@@¿ªÊ¼£¬ÔòÊÇ°×Ãûµ¥£¬manager»áÓÅÏÈ¿¼ÂÇ
-      ÒÔ||¿ªÊ¼ÔòÊÇ²»Æ¥ÅäĞ­ÒéÃûµÄ¹ıÂË£¬²¢È¥µô||
-      ÒÔ|¿ªÊ¼£¬ÔòÈ¥µô|£¬·ñÔòÔÚ¿ªÊ¼´¦Ìí¼Ó*
-      º¬ÓĞ$ÀàĞÍÖ¸¶¨¹æÔò£¬È¥µôÕâĞ©×Ö·û´®£¬²¢´¦ÀíÀàĞÍ
-      ÒÔ|½áÎ²£¬È¥µô|£¬·ñÔòÔÚ½áÎ²´¦Ìí¼Ó*
+      é¦–å…ˆmanagerå·²ç»åˆ¤æ–­è¿‡æ˜¯è¿‡æ»¤è€Œä¸æ˜¯éšè—è§„åˆ™äº†
+      ä»¥@@å¼€å§‹ï¼Œåˆ™æ˜¯ç™½åå•ï¼Œmanagerä¼šä¼˜å…ˆè€ƒè™‘
+      ä»¥||å¼€å§‹åˆ™æ˜¯ä¸åŒ¹é…åè®®åçš„è¿‡æ»¤ï¼Œå¹¶å»æ‰||
+      ä»¥|å¼€å§‹ï¼Œåˆ™å»æ‰|ï¼Œå¦åˆ™åœ¨å¼€å§‹å¤„æ·»åŠ *
+      å«æœ‰$ç±»å‹æŒ‡å®šè§„åˆ™ï¼Œå»æ‰è¿™äº›å­—ç¬¦ä¸²ï¼Œå¹¶å¤„ç†ç±»å‹
+      ä»¥|ç»“å°¾ï¼Œå»æ‰|ï¼Œå¦åˆ™åœ¨ç»“å°¾å¤„æ·»åŠ *
       */
 FilterRule::FilterRule( const String & r)
 {
@@ -37,7 +37,7 @@ FilterRule::FilterRule( const String & r)
     m_type=0;
 	if(rule.startsWith("@@")) {
         this->m_isException=true;
-		//stripped+=2;//ÂÔ¹ı@@
+		//stripped+=2;//ç•¥è¿‡@@
 		rule.remove(0,2);
 	}
 	if(rule.startsWith("||")) {
@@ -318,7 +318,7 @@ inline char getCaseChar( char c,bool caseSensitive)
 }
 /*
   Separator character is anything but a letter,
-a digit, or one of the following: ¨C . %.
+a digit, or one of the following: â€“ . %.
   */
 static int  isSeperator( char ch)
 {
@@ -380,12 +380,12 @@ static inline int  patternStep( const char * s, const  char * p)
         return 1;
     memset(temp,0,sizeof(temp));
     strncpy(temp,p,min(sizeof(temp)-1,step));
-    printf("temp=%s,step=%d\n",temp,step);
+    //printf("temp=%s,step=%d\n",temp,step);
     const char * res=strfind(s,temp);
-    if(!res) //Ã»ÓĞÕÒµ½
-        return strlen(s); //ÒÆ¶¯ÕæÕû¸ö×Ö·û´®
+    if(!res) //æ²¡æœ‰æ‰¾åˆ°
+        return strlen(s); //ç§»åŠ¨çœŸæ•´ä¸ªå­—ç¬¦ä¸²
     else
-        return max(1,res-s); //ÕÒµ½µÚÒ»¸öÆ¥ÅäµÄ×Ö·û´®µÄÎ»ÖÃ
+        return max(1,res-s); //æ‰¾åˆ°ç¬¬ä¸€ä¸ªåŒ¹é…çš„å­—ç¬¦ä¸²çš„ä½ç½®
 }
 /*
    test if a given string  and a pattern  matches use adblock plus rule

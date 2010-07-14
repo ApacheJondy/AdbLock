@@ -1,20 +1,42 @@
+2010-7-14
+å®ç°éšè—è§„åˆ™ï¼Œå®ç°æ–¹æ³•å°†é€‰æ‹©å™¨åé¢è¿½åŠ {display :none !important;}
+ç„¶ååœ¨ç³»ç»ŸåŠ è½½ç¼ºçœcssæ—¶åŠ è½½è¿›å»ï¼Œ
+ä½¿ç”¨æ–¹æ³•ï¼š
+åœ¨CSSStyleSelector::CSSStyleSelectoræ„é€ å‡½æ•°ä¸­åŠ å…¥å¦‚ä¸‹ä»£ç ï¼š
+åœ¨ 
+  // add stylesheets from document
+    m_authorStyle = new CSSRuleSet();
+åé¢åŠ å…¥ï¼š
+if (doc) {
+        RefPtr<CSSStyleSheet> sheet = CSSStyleSheet::create(doc);
+        String res =FilterManager::getManager( getenv(
+                                "WEBKIT_ADB_FILTERFILE"))->cssrules(
+                                doc->url().host());
+        //å–å¾—äº†cssè„šæœ¬ï¼Œå¦‚æœæ˜¯ç©ºï¼Œåˆ™æ˜¯æ²¡æœ‰æ‰¾åˆ°è¿‡æ»¤è§„åˆ™
+        if (!res.isEmpty()) {
+            sheet->parseString(res);
+            m_filterCSS = sheet;
+            fprintf(stderr,"css for %s :%s\n",doc->url().host().utf8().data(),res.utf8().data());
+            m_authorStyle->addRulesFromSheet(sheet.get(), *m_medium, this);
+        }
+    }
 2010-7-12
-Ç°¶ÎÊ±¼äÒÔÎªÔÚResourceHandler£º£ºstartÖĞ½øĞĞ¹ıÂË¾Í¿ÉÒÔÁË£¬
-¾­¹ıÈÏÕæ²âÊÔ·¢ÏÖ²»ĞĞ£¬»á´ò²»¿ªÍøÒ³£¬¾­¹ıÑéÖ¤¿ÉÄÜÊÇÃ»ÓĞ·´À¡´íÎóĞÅÏ¢µ¼ÖÂ
-£¬¸ÄÔÚResourceLoader::didReceiveResponseÀ´½øĞĞ¹ıÂË£º
+å‰æ®µæ—¶é—´ä»¥ä¸ºåœ¨ResourceHandlerï¼šï¼šstartä¸­è¿›è¡Œè¿‡æ»¤å°±å¯ä»¥äº†ï¼Œ
+ç»è¿‡è®¤çœŸæµ‹è¯•å‘ç°ä¸è¡Œï¼Œä¼šæ‰“ä¸å¼€ç½‘é¡µï¼Œç»è¿‡éªŒè¯å¯èƒ½æ˜¯æ²¡æœ‰åé¦ˆé”™è¯¯ä¿¡æ¯å¯¼è‡´
+ï¼Œæ”¹åœ¨ResourceLoader::didReceiveResponseæ¥è¿›è¡Œè¿‡æ»¤ï¼š
 FilterManager * m=FilterManager::getManager(getenv("WEBKIT_ADB_FILTERFILE"));
 if(m->shouldFilter(this->frameLoader()->frame()->document()->baseURL(),r.url()))
 {
     didFail(frameLoader()->fileDoesNotExistError(r));
 }
-´ËÖÖ·½·¨¾­news.sina.com.cn,www.sina.com.cnÁ½¸öÍøÒ³ÑéÖ¤£¬Ã»ÓĞÎÊÌâ£¬
-³ıÁË²»Ö§³Öµ½Ïñ¶ÔÏó¹ıÂË£¬»¹ÓĞ¾ÍÊÇsubdocumentµÈ¡£
-»¹ÓĞÒ»¸öÎÊÌâ¾ÍÊÇĞ§ÂÊÎÊÌâ£¬ĞèÒªÖØµã²âÊÔ
+æ­¤ç§æ–¹æ³•ç»news.sina.com.cn,www.sina.com.cnä¸¤ä¸ªç½‘é¡µéªŒè¯ï¼Œæ²¡æœ‰é—®é¢˜ï¼Œ
+é™¤äº†ä¸æ”¯æŒåˆ°åƒå¯¹è±¡è¿‡æ»¤ï¼Œè¿˜æœ‰å°±æ˜¯subdocumentç­‰ã€‚
+è¿˜æœ‰ä¸€ä¸ªé—®é¢˜å°±æ˜¯æ•ˆç‡é—®é¢˜ï¼Œéœ€è¦é‡ç‚¹æµ‹è¯•
 
 2010-6-27
-Ä¿Ç°Ö»Ö§³Öscript£¬image£¬stylesheet£¬third-party£¬domain¹æÔò
-ÆäÖĞscript£¬image£¬stylesheet¹æÔòÍ¨¹ıurl×Ö·û´®µÄÖĞµÄÎÄ¼şÀ©Õ¹ÃûÀ´Æ¥Åä£¬
-third-party£¬domainÔò½èÖúKURLÀà½øĞĞ½âÎö£¬
-¶ÔÓÚÒş²Ø¹æÔò£¬ÔÙÑĞ¾¿webkitÒÔºóÀ´ÊµÏÖ¡£
+ç›®å‰åªæ”¯æŒscriptï¼Œimageï¼Œstylesheetï¼Œthird-partyï¼Œdomainè§„åˆ™
+å…¶ä¸­scriptï¼Œimageï¼Œstylesheetè§„åˆ™é€šè¿‡urlå­—ç¬¦ä¸²çš„ä¸­çš„æ–‡ä»¶æ‰©å±•åæ¥åŒ¹é…ï¼Œ
+third-partyï¼Œdomainåˆ™å€ŸåŠ©KURLç±»è¿›è¡Œè§£æï¼Œ
+å¯¹äºéšè—è§„åˆ™ï¼Œå†ç ”ç©¶webkitä»¥åæ¥å®ç°ã€‚
 
-²âÊÔÁËÒ»ÏÂ£¬¹ıÂËËÙ¶È»¹¿ÉÒÔ£¬¾Í¶©ÔÄµÄchinalist£¬¹ıÂË´ó²¿·Öurl¶¼·Ç³£¿é£¬¼¸ºõ²»ĞèÊ±¼ä¡£
+æµ‹è¯•äº†ä¸€ä¸‹ï¼Œè¿‡æ»¤é€Ÿåº¦è¿˜å¯ä»¥ï¼Œå°±è®¢é˜…çš„chinalistï¼Œè¿‡æ»¤å¤§éƒ¨åˆ†urléƒ½éå¸¸å—ï¼Œå‡ ä¹ä¸éœ€æ—¶é—´ã€‚
