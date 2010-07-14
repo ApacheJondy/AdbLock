@@ -1,4 +1,12 @@
 2010-7-14
+过滤器使用方法：
+，在ResourceLoader::didReceiveResponse来进行过滤：
+FilterManager * m=FilterManager::getManager(getenv("WEBKIT_ADB_FILTERFILE"));
+if(m->shouldFilter(this->frameLoader()->frame()->document()，&r))
+{
+    didFail(frameLoader()->fileDoesNotExistError(r));
+}
+2010-7-14
 更改FilterManager过滤接口，原接口定义为private，新接口形如：
 bool shouldFilter(const Document *doc,const ResourceResponseBase * response);
 更改以后可以获取到更多的信息，可以进行更准确的过滤。

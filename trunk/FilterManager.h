@@ -20,7 +20,7 @@
 namespace WebCore {
 
 	/*
-     匹配类型，目前暂时只支持，script，image，stylesheet，以及third_party,
+     匹配类型，目前暂时只支持，script，image，stylesheet，以及third_party, object(swf only), subdocument,
 	 */
 	#define FILTER_TYPE_SCRIPT 0x0001
 	#define FILTER_TYPE_IMAGE 0X0002
