@@ -17,29 +17,29 @@ namespace WebCore {
 	class FilterRule {
 	public:
 		/*
-		 Ê×ÏÈmanagerÒÑ¾­ÅĞ¶Ï¹ıÊÇ¹ıÂË¶ø²»ÊÇÒş²Ø¹æÔòÁË
-		 ÒÔ@@¿ªÊ¼£¬ÔòÊÇ°×Ãûµ¥£¬manager»áÓÅÏÈ¿¼ÂÇ
-		 ÒÔ||¿ªÊ¼ÔòÊÇ²»Æ¥ÅäĞ­ÒéÃûµÄ¹ıÂË£¬²¢È¥µô||
-		 ÒÔ|¿ªÊ¼£¬ÔòÈ¥µô|£¬·ñÔòÔÚ¿ªÊ¼´¦Ìí¼Ó*
-		 º¬ÓĞ$ÀàĞÍÖ¸¶¨¹æÔò£¬È¥µôÕâĞ©×Ö·û´®£¬²¢´¦ÀíÀàĞÍ
-		 ÒÔ|½áÎ²£¬È¥µô|£¬·ñÔòÔÚ½áÎ²´¦Ìí¼Ó*
+		 é¦–å…ˆmanagerå·²ç»åˆ¤æ–­è¿‡æ˜¯è¿‡æ»¤è€Œä¸æ˜¯éšè—è§„åˆ™äº†
+		 ä»¥@@å¼€å§‹ï¼Œåˆ™æ˜¯ç™½åå•ï¼Œmanagerä¼šä¼˜å…ˆè€ƒè™‘
+		 ä»¥||å¼€å§‹åˆ™æ˜¯ä¸åŒ¹é…åè®®åçš„è¿‡æ»¤ï¼Œå¹¶å»æ‰||
+		 ä»¥|å¼€å§‹ï¼Œåˆ™å»æ‰|ï¼Œå¦åˆ™åœ¨å¼€å§‹å¤„æ·»åŠ *
+		 å«æœ‰$ç±»å‹æŒ‡å®šè§„åˆ™ï¼Œå»æ‰è¿™äº›å­—ç¬¦ä¸²ï¼Œå¹¶å¤„ç†ç±»å‹
+		 ä»¥|ç»“å°¾ï¼Œå»æ‰|ï¼Œå¦åˆ™åœ¨ç»“å°¾å¤„æ·»åŠ *
 		 */
 		FilterRule( const String & rule);
 		/*
-		 ÊÇ·ñÓ¦¸Ã¹ıÂË£¬Èç¹ûÊÇ°×Ãûµ¥£¬Æ¥ÅäÔòÓ¦¸Ã²»¹ıÂË£¬·ñÔò¹ıÂË
-		 ÀàĞÍÓÃÓÚÖ»¹ıÂËadlbock plus¹æÔòÖĞÖ¸¶¨µÄÀàĞÍ¡£
+		 æ˜¯å¦åº”è¯¥è¿‡æ»¤ï¼Œå¦‚æœæ˜¯ç™½åå•ï¼ŒåŒ¹é…åˆ™åº”è¯¥ä¸è¿‡æ»¤ï¼Œå¦åˆ™è¿‡æ»¤
+		 ç±»å‹ç”¨äºåªè¿‡æ»¤adlbock plusè§„åˆ™ä¸­æŒ‡å®šçš„ç±»å‹ã€‚
 		 */
         bool shouldFilter(const KURL & mainURL,const KURL & url, FilterType t);
-		//ÊÇ·ñÊÇ°×Ãûµ¥
+		//æ˜¯å¦æ˜¯ç™½åå•
         bool isWhiteFilter() { return m_isException;}
-		//ÊÇ·ñÊÇÍ¨¹ıÀàĞÍÀ´½øĞĞ¹ıÂË£¬±ÈÈçÖ»¹ıÂË½Å±¾µÈ¡£Õâ¸ö¿ÉÄÜĞèÒªºÜ¶àĞÅÏ¢£¬ÔİÊ±²»Óè¿¼ÂÇ£¬±ÈÈçdomainÀàĞÍ¹ıÂË£¬
+		//æ˜¯å¦æ˜¯é€šè¿‡ç±»å‹æ¥è¿›è¡Œè¿‡æ»¤ï¼Œæ¯”å¦‚åªè¿‡æ»¤è„šæœ¬ç­‰ã€‚è¿™ä¸ªå¯èƒ½éœ€è¦å¾ˆå¤šä¿¡æ¯ï¼Œæš‚æ—¶ä¸äºˆè€ƒè™‘ï¼Œæ¯”å¦‚domainç±»å‹è¿‡æ»¤ï¼Œ
         bool isNeedMimeType() { return m_type!=0;}
         const String & getRegularFilter(){ return m_reFilter;}
         const String & getWholeRule() { return m_rule;}
 		//inline const StringVector &  constantsForFastSearch() {return constants;}
 		void print();
 	private:
-        bool m_isException; // start with @@ //°×Ãûµ¥
+        bool m_isException; // start with @@ //ç™½åå•
         bool m_isMatchProtocol;
 
 		/*
@@ -63,15 +63,15 @@ to requests from the same origin as the currently viewed page.
 
         /*
 Domain restrictions: The option domain=example.com means that the filter
-should only be applied on pages from ¡°example.com¡± domain. Multiple domains
-can be specified using ¡°|¡± as separator: with the option
+should only be applied on pages from â€œexample.comâ€ domain. Multiple domains
+can be specified using â€œ|â€ as separator: with the option
 domain=example.com|example.net the filter will only be applied on pages from
-¡°example.com¡± or ¡°example.net¡± domains. If a domain name is preceded with
-¡°~¡±, the filter should not be applied on pages from this domain. For example,
+â€œexample.comâ€ or â€œexample.netâ€ domains. If a domain name is preceded with
+â€œ~â€, the filter should not be applied on pages from this domain. For example,
 domain=~example.com means that the filter should be applied on pages from any
-domain but ¡°example.com¡± and domain=example.com|~foo.example.com restricts
-the filter to the ¡°example.com¡± domain with the exception of
-¡°foo.example.com¡± subdomain.
+domain but â€œexample.comâ€ and domain=example.com|~foo.example.com restricts
+the filter to the â€œexample.comâ€ domain with the exception of
+â€œfoo.example.comâ€ subdomain.
          */
         Vector<String> m_domains;
         Vector<String> m_inverseDomains;
@@ -83,18 +83,18 @@ the filter to the ¡°example.com¡± domain with the exception of
         bool processDomains(String & ds);
 
 	};
-	//Òş²Ø¹æÔò£¬º¬ÓĞ##µÄ¹æÔò
+	//éšè—è§„åˆ™ï¼Œå«æœ‰##çš„è§„åˆ™
 	class HideRule {
 	public:
 		/*
-		 ½«##Ö®Ç°µÄ×Ö·û´®½âÎöÎªÒ»×éÓòÃû£¬ºóÃæµÄÔ­·â²»¶¯£¬×÷ÎªcssÑ¡ÔñÆ÷À´´¦Àí¡£
+		 å°†##ä¹‹å‰çš„å­—ç¬¦ä¸²è§£æä¸ºä¸€ç»„åŸŸåï¼Œåé¢çš„åŸå°ä¸åŠ¨ï¼Œä½œä¸ºcssé€‰æ‹©å™¨æ¥å¤„ç†ã€‚
 		 */
 		HideRule(const String & r);
-		//Òş²Ø¹æÔòÊÊÓÃµÄdomain¡£Èç¹ûÎª¿Õ£¬ÔòÊÊÓÃÓÚËùÓĞ£¬·ñÔòÖ»ÊÊÓÃÓÚÖ¸Ã÷µÄdomain
-		const StringVector & domains();
+		//éšè—è§„åˆ™é€‚ç”¨çš„domainã€‚å¦‚æœä¸ºç©ºï¼Œåˆ™é€‚ç”¨äºæ‰€æœ‰ï¼Œå¦åˆ™åªé€‚ç”¨äºæŒ‡æ˜çš„domain
+		const StringVector & domains() { return m_domains;}
 		//example.com,~foo.example.com##*.sponsor
-		//*.sponsor¾ÍÊÇselector
-		const String & selector();
+		//*.sponsorå°±æ˜¯selector
+		const String & selector() { return m_sel;}
 		void print();
 	private:
 		String m_sel;

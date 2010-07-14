@@ -6,12 +6,9 @@
  */
 
 #include "FilterManager.h"
+#include <fstream>
 #include "ADBFilter.h"
 #include "CString.h"
-//#include <iostream>
-#include <fstream>
-#include <string>
-#include <conio.h>
 #ifndef ADB_NO_QT_DEBUG
 #include <QDebug>
 #endif
@@ -70,7 +67,7 @@ FilterManager::FilterManager(const String & filename) {
         fprintf(stderr,"open Adblock plus configfile :%s failed \n", filename.utf8().data());
 	else {
 		char rule[1000];
-		infile.getline(rule, 1000); //忽略第一行版本号
+		infile.getline(rule, 1000); //蹇界暐绗竴琛岀増鏈彿
 		while (!infile.eof()) {
 			memset(rule, 0, 1000);
 			infile.getline(rule, 1000);
@@ -90,7 +87,8 @@ FilterManager::FilterManager(const String & filename) {
 				String s(rule);
                 //qDebug()<<"add rule:"<<s;
 				if (s.contains("##")) {
-					//this->addRule(new HideRule(s));
+					HideRule hr(s);
+					this->addRule(&hr);
 				} else {
 					this->addRule(new FilterRule(s));
 				}
@@ -122,17 +120,18 @@ FilterManager::~FilterManager()
 			it!=m_AllFilterRules.end();++it) {
 		delete *it;
 	}
-	for (Vector<HideRule *>::iterator it=m_AllHideRules.begin();
-			it!=m_AllHideRules.end();++it) {
-		delete *it;
-	}
 //hiderule process
 }
 #define RULE_KEY_HASH_LENGTH 8
+inline int min(int f1,int f2)
+{
+    return f1<f2?f1:f2;
+}
+
 static bool collectShortcuts(const String & str, StringVector & vs) {
 	unsigned int i = 0;
 	bool isFindShoutcut = false;
-	while (i < str.length() - RULE_KEY_HASH_LENGTH) {
+	while (i < min(str.length() - RULE_KEY_HASH_LENGTH,80)) {
 		unsigned int j = i;
 		for (; j < str.length(); j++) {
 			if ((str[j] == '*' || str[j] == '^')) {
@@ -188,14 +187,27 @@ void FilterManager::addRule(FilterRule * r)
     //qDebug()<<"unshort:"<<unshortcutRules->size();
 }
 void FilterManager::addRule(HideRule * r) {
-	//hiderules.add(r)
+	const StringVector & domains=r->domains();
+	const String & sel=r->selector();
+	for(StringVector::const_iterator it=domains.begin();it!=domains.end();it++) {
+		const String & key=*it;
+		HideRuleMap::iterator hit=this->m_hiderules.find(key);
+		if(hit!=m_hiderules.end()) {
+			hit->second=hit->second+String(",")+sel;
+		}
+		else {
+			m_hiderules.add(*it,sel);
+		}
+	}
 }
 bool FilterManager::addRule(String rule)
 {
+	//not implemented
 	return true;
 }
 bool FilterManager::hideRule(int id)
 {
+	//not implemented
 	return true;
 }
 bool FilterManager::shouldFilter(const KURL & mainURL,const KURL & url,FilterType t)
@@ -226,9 +238,35 @@ bool FilterManager::shouldFilter(const KURL & mainURL,const KURL & url,FilterTyp
 	}
 	return false;
 }
-String FilterManager::cssrules(const String & domain)
+String FilterManager::cssrules(const String & host)
 {
-	return String();
+	String res;
+	StringVector dotsplits;
+	host.split('.',dotsplits);
+	if(dotsplits.size()<=1) //domain error? no dot? at least g.cn
+		return res;
+	int ignore=2;
+	String l2domain=dotsplits[dotsplits.size()-2];
+	if(l2domain =="com" ||
+			l2domain=="net" ||
+			l2domain=="org" ||
+			l2domain=="edu")
+		ignore=3;
+	for(int i=dotsplits.size()-ignore;i>=0;i--) {
+		String domain=dotsplits[i];
+		for(int j=i+1;j<dotsplits.size();j++) {
+			domain=domain+"."+dotsplits[j];
+		}
+		HideRuleMap::iterator it=this->m_hiderules.find(domain);
+		//qDebug()<<"handle domain:"<<domain;
+		if(it!=m_hiderules.end()) {
+			res=res.isEmpty()?it->second:res+","+it->second;
+		}
+	}
+	if(!res.isEmpty()) {
+		res+="{display:none !important;}";
+	}
+	return res;
 }
 static FilterManager * m=NULL;
 FilterManager * FilterManager::getManager(const StringVector & rules)
@@ -248,6 +286,9 @@ FilterManager * FilterManager::getManager(const String & filename)
     qDebug()<<"unshortcut filter rules:" << m->m_UnshortcutFilterRules.size();
     qDebug()<<"whitelist rules:"<<m->m_ShortcutWhiteRules.size();
     qDebug()<<"unshortcut whitelist rules:"<<m->m_UnshortcutWhiteRules.size();
+    for(HideRuleMap::iterator it=m->m_hiderules.begin();it!= m->m_hiderules.end();++it) {
+    	qDebug()<<it->first<<":"<<it->second;
+    }
 #endif
 #if 0
 	for(FilterRuleMap::iterator it=m->m_ShortcutFilterRules.begin();

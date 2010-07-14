@@ -20,7 +20,7 @@
 namespace WebCore {
 
 	/*
-     Æ¥ÅäÀàĞÍ£¬Ä¿Ç°ÔİÊ±Ö»Ö§³Ö£¬script£¬image£¬stylesheet£¬ÒÔ¼°third_party,
+     åŒ¹é…ç±»å‹ï¼Œç›®å‰æš‚æ—¶åªæ”¯æŒï¼Œscriptï¼Œimageï¼Œstylesheetï¼Œä»¥åŠthird_party,
 	 */
 	#define FILTER_TYPE_SCRIPT 0x0001
 	#define FILTER_TYPE_IMAGE 0X0002
@@ -28,7 +28,7 @@ namespace WebCore {
 	#define FILTER_TYPE_STYLESHEET 0X0008
 	#define FILTER_TYPE_OBJECT 0X0010
 
-	#define FILTER_TYPE_XBL 0X0020 //²»»áÖ§³Ö
+	#define FILTER_TYPE_XBL 0X0020 //ä¸ä¼šæ”¯æŒ
 	#define FILTER_TYPE_PING 0X0040
 
 	#define FILTER_TYPE_XMLHTTPREQUEST 0x0080
@@ -48,15 +48,15 @@ namespace WebCore {
 	class HideRule;
 	class FilterRuleList;
 	class HideRuleList;
-	//Ö»Ó¦¸ÃÓĞÒ»¸öÊµÀı,
+	//åªåº”è¯¥æœ‰ä¸€ä¸ªå®ä¾‹,
 	/*
-	 ÕâÀïĞèÒª¿¼ÂÇµÄÊÇ±£Ö¤¸ÃÀàÊÇ¶àÏß³Ì°²È«µÄ£¬Õı³£²éÑ¯¿ÉÒÔ±£Ö¤
-	 Ö»ÊÇ¶¯Ì¬É¾³ıÒÔ¼°Ìí¼ÓÊ±ÈçºÎ±£Ö¤¶àÏß³Ì°²È«,ÄÚ²¿ÊÊÓÃmapÀ´¹ÜÀí¸÷ÖÖ¹æÔò
-	 »òÕßhashÀ´¹ÜÀí¡£
+	 è¿™é‡Œéœ€è¦è€ƒè™‘çš„æ˜¯ä¿è¯è¯¥ç±»æ˜¯å¤šçº¿ç¨‹å®‰å…¨çš„ï¼Œæ­£å¸¸æŸ¥è¯¢å¯ä»¥ä¿è¯
+	 åªæ˜¯åŠ¨æ€åˆ é™¤ä»¥åŠæ·»åŠ æ—¶å¦‚ä½•ä¿è¯å¤šçº¿ç¨‹å®‰å…¨,å†…éƒ¨é€‚ç”¨mapæ¥ç®¡ç†å„ç§è§„åˆ™
+	 æˆ–è€…hashæ¥ç®¡ç†ã€‚
 	 */
 	class FilterManager {
 		//typedef HashMap<String,FilterRuleList* , CaseFoldingHash > FilterRuleMap;
-		typedef HashMap<String,HideRuleList* ,CaseFoldingHash> HideRuleMap;
+		typedef HashMap<String /*domain*/,String /*selector*/,CaseFoldingHash> HideRuleMap;
 
 		typedef Vector<FilterRule *> FilterRuleVector;
 
@@ -75,43 +75,42 @@ namespace WebCore {
 
 
 	private:
-		HideRuleMap hiderules;
+		HideRuleMap m_hiderules;
 		FilterRuleMap m_ShortcutWhiteRules; //white list, can use shortcut
 		FilterRuleVector m_UnshortcutWhiteRules;
 		FilterRuleMap m_ShortcutFilterRules;
 		FilterRuleVector m_UnshortcutFilterRules;
 		FilterRuleVector m_AllFilterRules;
-		Vector<HideRule * > m_AllHideRules;
 	private:
 		/*
-		 ´ÓÎÄ¼ş¶ÁÈ¡¹æÔò,stringÒªÊÇÓĞqtµÄÒşº¬¹²Ïí¾ÍºÃÁË£¬webkitÊ¹ÓÃµÄstring
-		 ¾ÍÊÇÒşº¬¹²Ïí£¬¿ÉÒÔÖ±½Ó´«Öµ
+		 ä»æ–‡ä»¶è¯»å–è§„åˆ™,stringè¦æ˜¯æœ‰qtçš„éšå«å…±äº«å°±å¥½äº†ï¼Œwebkitä½¿ç”¨çš„string
+		 å°±æ˜¯éšå«å…±äº«ï¼Œå¯ä»¥ç›´æ¥ä¼ å€¼
 		 */
 		FilterManager(const String & filename);
-		//¹æÔò¼¯ºÏ
+		//è§„åˆ™é›†åˆ
 		FilterManager(const StringVector & rules);
 	public:
 		static FilterManager* getManager(const String & filename);
 		static FilterManager * getManager(const StringVector & rules);
 		~FilterManager();
 		bool addRule(String rule);
-		//ÄÄ¸ö¹æÔò£¬ÔËĞĞÊ±²»ÄÜÒş²Ø£¬Ö»ÄÜÉ¾³ı
+		//å“ªä¸ªè§„åˆ™ï¼Œè¿è¡Œæ—¶ä¸èƒ½éšè—ï¼Œåªèƒ½åˆ é™¤
 		bool hideRule(int id);
 
 		/*
-		 ÊÇ·ñÓ¦¸Ã¹ıÂË,
-		 Ä¿Ç°Ôİ²»¿¼ÂÇÀàĞÍÆ¥Åä£¬ÒòÎªÀàĞÍĞÅÏ¢ÎŞ·¨»ñÈ¡
-		 ÒòÎªºÜ¶à¹æÔòÎŞ·¨Ã÷È·ÖªµÀ£¬±ÈÈçbackground£¬±ØĞëÀ´×ÔcssµÄÇëÇó£¬Ä¿Ç°ÎŞ·¨È·Öª
+		 æ˜¯å¦åº”è¯¥è¿‡æ»¤,
+		 ç›®å‰æš‚ä¸è€ƒè™‘ç±»å‹åŒ¹é…ï¼Œå› ä¸ºç±»å‹ä¿¡æ¯æ— æ³•è·å–
+		 å› ä¸ºå¾ˆå¤šè§„åˆ™æ— æ³•æ˜ç¡®çŸ¥é“ï¼Œæ¯”å¦‚backgroundï¼Œå¿…é¡»æ¥è‡ªcssçš„è¯·æ±‚ï¼Œç›®å‰æ— æ³•ç¡®çŸ¥
 		 */
 		/*
 		 * Besides of translating filters into regular expressions Adblock Plus also
 tries to extract text information from them. What it needs is a unique
-string of eight characters (a ¡°shortcut¡±) that must be present in every
+string of eight characters (a â€œshortcutâ€) that must be present in every
 address matched by the filter (the length is arbitrary, eight just seems
 reasonable here). For example, if you have a filter |http://ad.* then
-Adblock Plus has the choice between ¡°http://a¡±, ¡°ttp://ad¡± and ¡°tp://ad.¡±,
+Adblock Plus has the choice between â€œhttp://aâ€, â€œttp://adâ€ and â€œtp://ad.â€,
 any of these strings will always be present in whatever this filter will
-match. Unfortunately finding a shortcut for filters that simply don¡¯t have
+match. Unfortunately finding a shortcut for filters that simply donâ€™t have
 eight characters unbroken by wildcards or for filters that have been
 specified as regular expressions is impossible.
 
@@ -126,18 +125,18 @@ without a shortcut still have to be tested one after another which is slow.
 To sum up: which filters should be used to make a filter list fast? You
 should use as few regular expressions as possible, those are always slow.
 You also should make sure that simple filters have at least eight
-characters of unbroken text (meaning that these don¡¯t contain any
+characters of unbroken text (meaning that these donâ€™t contain any
 characters with a special meaning like *), otherwise they will be just as
-slow as regular expressions. But with filters that qualify it doesn¡¯t
+slow as regular expressions. But with filters that qualify it doesnâ€™t
 matter how many filters you have, the processing time is always the same.
 That means that if you need 20 simple filters to replace one regular
-expression then it is still worth it. Speaking of which ¡ª the deregifier is
+expression then it is still worth it. Speaking of which â€” the deregifier is
 very recommendable.
 		 */
         bool shouldFilter(const KURL & mainURL,const KURL & url, FilterType t=0);
-		//Ê¹ÓÃwebkitÄÚ²¿µÄÖ¸Õë¹ÜÀí°ì·¨À´¹ÜÀí·µ»ØÖµ£¿
-		//¸ù¾İÓòÃûÀ´È·¶¨ÊÊÓÃµÄcss¹æÔò£¬Èç¹û²»Ö§³ÖµÄcss¹æÔò£¬ÔİÊ±ºöÂÔ.
-		String cssrules(const String & domain);
+		//ä½¿ç”¨webkitå†…éƒ¨çš„æŒ‡é’ˆç®¡ç†åŠæ³•æ¥ç®¡ç†è¿”å›å€¼ï¼Ÿ
+		//æ ¹æ®åŸŸåæ¥ç¡®å®šé€‚ç”¨çš„cssè§„åˆ™ï¼Œå¦‚æœä¸æ”¯æŒçš„cssè§„åˆ™ï¼Œæš‚æ—¶å¿½ç•¥.
+		String cssrules(const String & host);
 	private:
 		void addRule(FilterRule * r);
 		void addRule(HideRule * r);
