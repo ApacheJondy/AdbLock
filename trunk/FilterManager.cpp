@@ -9,6 +9,9 @@
 #include <fstream>
 #include "ADBFilter.h"
 #include "CString.h"
+#include "Document.h"
+#include "ResourceResponseBase.h"
+#include "MIMETypeRegistry.h"
 #ifndef ADB_NO_QT_DEBUG
 #include <QDebug>
 #endif
@@ -210,33 +213,47 @@ bool FilterManager::hideRule(int id)
 	//not implemented
 	return true;
 }
+
 bool FilterManager::shouldFilter(const KURL & mainURL,const KURL & url,FilterType t)
 {
 	StringVector shortcuts;
-	collectShortcuts(url.string(),shortcuts);
-    this->m_ShortcutFilterRules.prepareStartFind();
-    this->m_ShortcutWhiteRules.prepareStartFind();
-	for(StringVector::iterator it=shortcuts.begin();
-			it!=shortcuts.end();++it) {
-        if(m_ShortcutWhiteRules.doFilter(mainURL,*it,url,t))
+	collectShortcuts(url.string(), shortcuts);
+	this->m_ShortcutFilterRules.prepareStartFind();
+	this->m_ShortcutWhiteRules.prepareStartFind();
+	for (StringVector::iterator it = shortcuts.begin(); it != shortcuts.end(); ++it) {
+		if (m_ShortcutWhiteRules.doFilter(mainURL, *it, url, t))
 			return false;
-		for(FilterRuleVector::iterator fit=this->m_UnshortcutWhiteRules.begin();
-				fit!=this->m_UnshortcutWhiteRules.end();++fit) {
-            if((*fit)->shouldFilter(mainURL,url,t))
+		for (FilterRuleVector::iterator fit =
+				this->m_UnshortcutWhiteRules.begin(); fit
+				!= this->m_UnshortcutWhiteRules.end(); ++fit) {
+			if ((*fit)->shouldFilter(mainURL, url, t))
 				return false;
 		}
 	}
-	for(StringVector::iterator it=shortcuts.begin();
-			it!=shortcuts.end();++it) {
-        if(this->m_ShortcutFilterRules.doFilter(mainURL,*it,url,t))
+	for (StringVector::iterator it = shortcuts.begin(); it != shortcuts.end(); ++it) {
+		if (this->m_ShortcutFilterRules.doFilter(mainURL, *it, url, t))
 			return true;
-		for(FilterRuleVector::iterator fit=this->m_UnshortcutFilterRules.begin();
-				fit!=this->m_UnshortcutFilterRules.end();++fit) {
-            if((*fit)->shouldFilter(mainURL,url,t))
+		for (FilterRuleVector::iterator fit =
+				this->m_UnshortcutFilterRules.begin(); fit
+				!= this->m_UnshortcutFilterRules.end(); ++fit) {
+			if ((*fit)->shouldFilter(mainURL, url, t))
 				return true;
 		}
 	}
 	return false;
+}
+bool FilterManager::shouldFilter(const Document * doc,const ResourceResponseBase * response)
+{
+	const KURL & mainURL=doc->baseURL();
+	const KURL & url=response->url();
+	FilterType t=0;
+	if(MIMETypeRegistry::isSupportedImageMIMEType(response->mimeType()))
+		t|=FILTER_TYPE_IMAGE;
+	if(MIMETypeRegistry::isSupportedJavaScriptMIMEType(response->mimeType()))
+		t|=FILTER_TYPE_SCRIPT;
+	if(doc->ownerElement() && response->mimeType()=="text/html")
+		t|=FILTER_TYPE_SUBDOCUMENT;
+	return shouldFilter(mainURL,url,t);
 }
 String FilterManager::cssrules(const String & host)
 {
@@ -281,7 +298,7 @@ FilterManager * FilterManager::getManager(const String & filename)
 	if(m)
 		return m;
 	m=new FilterManager(filename);
-#if 1
+#if 0
     qDebug()<<"filter rules:"<<m->m_ShortcutFilterRules.size();
     qDebug()<<"unshortcut filter rules:" << m->m_UnshortcutFilterRules.size();
     qDebug()<<"whitelist rules:"<<m->m_ShortcutWhiteRules.size();
