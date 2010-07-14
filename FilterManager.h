@@ -48,6 +48,8 @@ namespace WebCore {
 	class HideRule;
 	class FilterRuleList;
 	class HideRuleList;
+	class Document;
+	class ResourceResponseBase;
 	//只应该有一个实例,
 	/*
 	 这里需要考虑的是保证该类是多线程安全的，正常查询可以保证
@@ -133,13 +135,14 @@ That means that if you need 20 simple filters to replace one regular
 expression then it is still worth it. Speaking of which — the deregifier is
 very recommendable.
 		 */
-        bool shouldFilter(const KURL & mainURL,const KURL & url, FilterType t=0);
+        bool shouldFilter(const Document *doc,const ResourceResponseBase * response);
 		//使用webkit内部的指针管理办法来管理返回值？
 		//根据域名来确定适用的css规则，如果不支持的css规则，暂时忽略.
 		String cssrules(const String & host);
 	private:
 		void addRule(FilterRule * r);
 		void addRule(HideRule * r);
+		bool shouldFilter(const KURL & mainURL,const KURL & url,FilterType t);
 	};
 }
 #endif // FILTERMANAGER_H

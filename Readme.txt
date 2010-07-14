@@ -1,4 +1,12 @@
 2010-7-14
+更改FilterManager过滤接口，原接口定义为private，新接口形如：
+bool shouldFilter(const Document *doc,const ResourceResponseBase * response);
+更改以后可以获取到更多的信息，可以进行更准确的过滤。
+增加对subdocument类型过滤支持
+下一步要考虑内容：
+目前过滤以后只是不下载，但是在页面中仍会为被过滤对象留出空间，显得非常难看
+下一步计划找出发起资源下载的tag，然后将其隐藏。
+2010-7-14
 实现隐藏规则，实现方法将选择器后面追加{display :none !important;}
 然后在系统加载缺省css时加载进去，
 使用方法：

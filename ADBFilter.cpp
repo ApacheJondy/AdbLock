@@ -252,6 +252,10 @@ bool FilterRule::isMatchType(const KURL &u, FilterType t)
     if(m_type&FILTER_TYPE_STYLESHEET && url.endsWith(".css") ) {
         return true;
     }
+    t&=~FILTER_TYPE_OBJECT;
+    if(m_type & FILTER_TYPE_OBJECT && url.endsWith(".swf")) { //filter flash
+    	return true;
+    }
     return false; //unsupport format ,always doesn't filter
 }
 
