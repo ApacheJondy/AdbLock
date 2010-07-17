@@ -22,6 +22,7 @@
 #include "ADBFilter.h"
 #include <wtf/Vector.h>
 #include "CString.h"
+#include "KURL.h"
 #ifndef ADB_NO_QT_DEBUG
 #include <QDebug>
 #endif
@@ -34,6 +35,52 @@ static void printString(const String & s)
 #endif
 	//printf("%s\n",s.utf8().data());
 }
+static String parseDomain(String host)
+{
+	int spos=0;
+	int endpos=-1;
+	if (host[spos] == '*') {
+		spos+=1;
+	}
+	if (host[spos] == '*') {
+		spos += 1;
+	}
+	if (host.find("http://",spos,false)!=-1) {
+		spos+=7;
+	}
+	if(host.find("https://",spos,false)!=-1) {
+		spos+=8;
+	}
+	//host=host.substring(spos);
+	endpos=host.find('/',spos);
+	if (endpos == -1)
+	{
+		endpos=host.length();
+		if (host[endpos - 1] == '*' || host[endpos - 1] == '^')
+			endpos -= 1;
+		if (host[endpos - 1] == '*' || host[endpos - 1] == '^')
+			endpos -= 1;
+	}
+	//host=host.substring(spos,endpos-spos);
+	bool ignoreNextDot=false;
+	for(int i=spos;i<endpos;i++) {
+		if(ignoreNextDot && host[i]=='.') {
+			spos=i+1;
+			ignoreNextDot=false;
+		}
+		if(host[i]=='*' || host[i]=='^')
+		{
+			ignoreNextDot=true;
+			spos=i+1;
+		}
+	}
+
+	host=host.substring(spos,endpos-spos);
+	if(host[0]=='.' || host[host.length()-1]=='.' || !host.contains('.'))
+		return String();
+	return host;
+}
+
     /*
       首先manager已经判断过是过滤而不是隐藏规则了
       以@@开始，则是白名单，manager会优先考虑
@@ -132,11 +179,12 @@ FilterRule::FilterRule( const String & r)
 		rule.append("*");
     this->m_reFilter=rule;
 
+
 }
 void FilterRule::print()
 {
 #ifndef ADB_NO_QT_DEBUG
-    ////qDebug()<<"re:"<<reFilter;
+    qDebug()<<"re:"<<m_reFilter;
     ////qDebug()<<"isExceptions:"<<this->isException;
     ////qDebug()<<"type:"<<type;
     ////qDebug()<<"isMatchProtocol:"<<this->isMatchProtocol;
@@ -173,6 +221,20 @@ void HideRule::print()
 #endif
 }
 
+/*
+ * 获取该规则期望过滤的域名
+ */
+void FilterRule::getDomains(StringVector & domains)
+{
+	if(!m_domains.isEmpty())
+	{
+		domains.append(m_domains);
+		return;
+	}
+	String s=parseDomain(m_reFilter);
+	if(!s.isEmpty())
+		domains.append(s);
+}
 bool FilterRule::processDomains(String &ds)
 {
     const UChar * d=ds.characters();
@@ -190,18 +252,18 @@ bool FilterRule::processDomains(String &ds)
             token=String();
         }
     }
-#if 1
-    //qDebug()<<"domains:";
+#if 0
+    qDebug()<<"domains:";
     for(StringVector::iterator it=m_domains.begin();
     it!=m_domains.end();++it) {
-        //qDebug()<<*it;
+        qDebug()<<*it;
     }
-    //qDebug()<<"inverse domains:";
+    qDebug()<<"inverse domains:";
     for(StringVector::iterator it=m_inverseDomains.begin();
     it!=m_inverseDomains.end();++it) {
-        //qDebug()<<*it;
+        qDebug()<<*it;
     }
-    //qDebug()<<"--------------------------------------------";
+    qDebug()<<"--------------------------------------------";
 #endif
 }
 
