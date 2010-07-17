@@ -1,3 +1,32 @@
+2010-7-17
+ 去掉调试信息，测试速度
+    2065        2887
+    2052        2752
+    2073        2618
+    2183        3028
+    2131        2611
+    2063        2720
+    2095        2903
+    2218        2606
+    2154        2648
+    2037        2648
+    2107.1      2742.1
+共过滤url147个，平均一个url4.3ms，规则采用
+http://adblock-chinalist.googlecode.com/svn/trunk/adblock.txt
+主要通过域名来建立hashmap，然后进行快速查找，目前绝大多数时间都花费在了规则查找
+尤其是当该url不会被过滤时，花费时间更多。
+
+2010-7-17
+由于采用adblock
+plus作者推荐的规则查找方法速度过于缓慢，通过分析adblock发现，它是采用域名来索引而不是8位方法，因此计划改用这种方法试试效果
+2010-7-15 
+由于被过滤对象虽然没有下载，但是会在页面上留有空白区域，这个看起来效果非常不好，可以在
+DocumentLoader::finishedLoading中遍历Document中的所有image对象，如果是被过滤的，那么则隐藏
+同理处理object，plugins，embedded等对象。
+其中这些对象的url的获取可以通过如下：
+HTMLPlugInImageElement：：url（），
+HTMLImageElement：：longDesc（）
+
 2010-7-14
 过滤器使用方法：
 ，在ResourceLoader::didReceiveResponse来进行过滤：

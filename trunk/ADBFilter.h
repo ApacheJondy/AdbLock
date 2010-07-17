@@ -49,6 +49,7 @@ namespace WebCore {
         bool isWhiteFilter() { return m_isException;}
 		//是否是通过类型来进行过滤，比如只过滤脚本等。这个可能需要很多信息，暂时不予考虑，比如domain类型过滤，
         bool isNeedMimeType() { return m_type!=0;}
+        void getDomains(StringVector & domains);
         const String & getRegularFilter(){ return m_reFilter;}
         const String & getWholeRule() { return m_rule;}
 		//inline const StringVector &  constantsForFastSearch() {return constants;}
