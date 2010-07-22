@@ -74,13 +74,12 @@ class Document;
 class FilterManager {
 	//typedef HashMap<String,FilterRuleList* , CaseFoldingHash > FilterRuleMap;
 
-	typedef HashMap<String /*domain*/, String /*selector*/, CaseFoldingHash>
+	typedef HashMap<String /*domain*/, String /*selector*/ >
 			HideRuleMap;
 	typedef HashMap<const Document *,HashSet<String>  > DocumentFilterURLHashMap;
 	typedef Vector<FilterRule *> FilterRuleVector;
 
-	class FilterRuleMap: public HashMap<String, FilterRuleList*,
-			CaseFoldingHash> {
+	class FilterRuleMap: public HashMap<String, FilterRuleList*> {
 		HashSet<unsigned int> unMatchRules;
 	public:
 		~FilterRuleMap();
